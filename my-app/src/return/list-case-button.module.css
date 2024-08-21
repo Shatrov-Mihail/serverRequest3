@@ -1,0 +1,35 @@
+.buttonList{
+	justify-content: end;
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+.list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.listItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.listItem button {
+	background-color: #d8051a;
+  }
+
+  .listItem button:hover {
+	background-color: #08b62e;
+  }
+
+  .listItem:nth-child(even) {
+	background-color: #f2f2f2;
+  }
