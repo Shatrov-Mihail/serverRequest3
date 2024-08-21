@@ -14,24 +14,37 @@ export const App = () => {
   const [objCase, setObjCase] = useState({});
   const [isSorted, setIsSorted] = useState(false);
   const [searchCase, setSearchCase] = useState("");
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const caseDbRef = ref(db, "case");
+    const unsubscribe = onValue(caseDbRef, (snapshot) => {
+		const loadedCase = snapshot.val() || {};
+		setObjCase(loadedCase);
+	  }, (error) => {
+		console.error("Error:", error);
+		setError("Не удалось загрузить данные. Попробуйте еще раз.");
+	  });
 
-    return onValue(caseDbRef, (snapshot) => {
-      const loadedCase = snapshot.val() || {};
+	  return () => unsubscribe();
+	}, []);
 
-      setObjCase(loadedCase);
-    });
-  }, []);
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		if (newCase.id) {
+		  updateCase(newCase.id);
+		} else {
+		  addNewCase();
+		}
+	  };
 
   const { addNewCase, newCase, setNewCase } = useAddNewCase({
-    setObjCase,
+    setObjCase, setError
   });
 
-  const deleteCase = useDeleteCase();
+  const deleteCase = useDeleteCase({setError});
 
-  const updateCase = useUpdateCase({ newCase, setObjCase, setNewCase });
+  const updateCase = useUpdateCase({ newCase, setObjCase, setNewCase, setError });
 
   const objCaseToArray = useObjCaseToArray({ objCase, searchCase });
 
@@ -53,15 +66,16 @@ export const App = () => {
       <InputNewCase
         newCase={newCase}
         setNewCase={setNewCase}
-        addNewCase={addNewCase}
+		handleSubmit={handleSubmit}
       />
 
       <h1 className={styles.header}>Список дел</h1>
 
       <ListCaseButton
         sortedCase={sortedCase}
-        deleteCase={deleteCase}
+        deleteCase={(deleteCase)}
         updateCase={updateCase}
+		setNewCase={setNewCase}
       />
     </div>
   );
